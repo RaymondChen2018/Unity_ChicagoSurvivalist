@@ -8,7 +8,7 @@ public enum DamageAgent
 public interface IDamage
 {
     DamageAgent getDamageAgent();
-    void sideEffect(ICharacterStat character, float damageInflicted);
+    void sideEffect(Character character, float damageInflicted);
 }
 public abstract class Damage
 {
@@ -30,7 +30,7 @@ public abstract class Damage
         }
         return damageAmount;
     }
-    public void sideEffect(ICharacterStat character, float damageInflicted)
+    public void sideEffect(Character character, float damageInflicted)
     {
         
     }
@@ -60,9 +60,8 @@ public class DamageFREEZE : Damage, IDamage
     {
         return DamageAgent.FREEZE;
     }
-    public new void sideEffect(ICharacterStat character, float damageInflicted)
+    public new void sideEffect(Character character, float damageInflicted)
     {
-        
         character.sf_freeze(damageInflicted);
     }
 }
@@ -90,7 +89,7 @@ public class DamageWIND : Damage, IDamage
     {
         return DamageAgent.WIND;
     }
-    public new void sideEffect(ICharacterStat character, float damageInflicted)
+    public new void sideEffect(Character character, float damageInflicted)
     {
         character.sf_freeze(damageInflicted);
     }
@@ -106,7 +105,7 @@ public class DamageCARCRUSH : Damage, IDamage
     {
         return DamageAgent.CARCRUSH;
     }
-    public new void sideEffect(ICharacterStat character, float damageInflicted)
+    public new void sideEffect(Character character, float damageInflicted)
     {
         character.sf_concuss(damageInflicted);
     }

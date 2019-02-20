@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_status : Character
+public class Player_status : Character, ICharacterStat
 {
     Player_equip playerEquip;
 
@@ -23,7 +23,7 @@ public class Player_status : Character
     /// Damage call
     /// </summary>
     /// <param name="damage">Damage object including type and amount of damage</param>
-    public new void damage(IDamage damage)
+    public void damage(IDamage damage)
     {
         DamageAgent agent = damage.getDamageAgent();
         float damageAmount = 0;
