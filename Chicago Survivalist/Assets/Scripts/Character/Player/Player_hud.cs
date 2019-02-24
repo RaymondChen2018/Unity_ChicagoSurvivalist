@@ -46,9 +46,9 @@ public class Player_hud : MonoBehaviour {
 
 
         //Calculate destination arrow
-        if (Destination_trigger.singleton != null)
+        if (Game_watcher.singleton != null)
         {
-            destinPosition = Destination_trigger.singleton.transform.position;
+            destinPosition = Game_watcher.getDestinationPos();
             thisPosition = transform.position;
             
 
@@ -73,8 +73,8 @@ public class Player_hud : MonoBehaviour {
             //Inside view 
             if (destinPosition.z <= top && destinPosition.z >= bottom && destinPosition.x <= right && destinPosition.x >= left)
             {
-                trackArrow.transform.rotation = Quaternion.Euler(90, Destination_trigger.singleton.get_entrance_dir(), 0);
-                trackArrow.transform.position = Destination_trigger.singleton.transform.position;
+                trackArrow.transform.rotation = Quaternion.Euler(90, Game_watcher.getDestinationDir(), 0);
+                trackArrow.transform.position = Game_watcher.getDestinationPos();
             }
             //Outside view
             else

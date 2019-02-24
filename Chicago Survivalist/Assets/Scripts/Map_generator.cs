@@ -3,32 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Map_generator : MonoBehaviour {
-    public static Map_generator singleton;
     //
-    public GameObject player_object;
-    public Destination_trigger exit_object;
-    public GameObject right_bound;
-    public GameObject left_bound;
-    public GameObject up_bound;
-    public GameObject lower_bound;
-
-    public static float map_size = 150;
+    
+    [SerializeField] private Destination_trigger exit_object;
+    [SerializeField] private GameObject right_bound;
+    [SerializeField] private GameObject left_bound;
+    [SerializeField] private GameObject up_bound;
+    [SerializeField] private GameObject lower_bound;
+    
+    public const float map_size = 150;
     static Vector2 bottomleft = -Vector2.one * map_size;
     static Vector2 topright = Vector2.one * map_size;
     static float sidewalk_height = 0.1f;
     static float exit_trig_width = 1f;
 
-    public float road_w_min = 2;
-    public float road_w_max = 6;
-    public float building_w_min = 6;
-    public float building_w_max = 15;
-    public float building_h_min = 15;
-    public float building_h_max = 50;
-    public float building_w_contract_limit_min = 0.1f;//side walk
-    public float building_w_contract_limit_max = 0.3f;
+    [SerializeField] private float road_w_min = 2;
+    [SerializeField] private float road_w_max = 6;
+    [SerializeField] private float building_w_min = 6;
+    [SerializeField] private float building_w_max = 15;
+    [SerializeField] private float building_h_min = 15;
+    [SerializeField] private float building_h_max = 50;
+    [SerializeField] private float building_w_contract_limit_min = 0.1f;//side walk
+    [SerializeField] private float building_w_contract_limit_max = 0.3f;
 
-    public GameObject[] building_template;
-    public GameObject sidewalk_template;
+    [SerializeField] private GameObject[] building_template;
+    [SerializeField] private GameObject sidewalk_template;
+
+
+    static Vector3 spawnLocation = new Vector3();
+    static Vector3 destinLocation = new Vector3();
+
+    //Temp variable
+    Vector3 tempVec = new Vector3();
 
     public class t1_road
     {
@@ -44,23 +50,22 @@ public class Map_generator : MonoBehaviour {
     };
 
     //Generation stat; Map dimension: (-150, -150) to (150, 150)
+    /// <summary>
+    /// 0 bottom-most; max top-most
+    /// </summary>
     List<t1_road> horizontal_roads = new List<t1_road>();
+    /// <summary>
+    /// 0 left-most; max right-most
+    /// </summary>
     List<t1_road> vertical_roads = new List<t1_road>();
+    /// <summary>
+    /// Buildings cover the edge, not roads
+    /// </summary>
     List<List<t2_building>> buildings = new List<List<t2_building>>();
     //Pool objects
     public List<GameObject> building_pool = new List<GameObject>();
     List<GameObject> sidewalk_pool = new List<GameObject>();
 
-    // Use this for initialization
-    void Start () {
-        singleton = this;
-        map_generate();
-        
-    }
-	// Update is called once per frame
-	void Update () {
-		//
-	}
 
     //Initialize cluster and building stats, create objects/modify pool to build city
     public void map_generate()
@@ -154,10 +159,7 @@ public class Map_generator : MonoBehaviour {
             {
                 xboundr = vertical_roads[i].lower;
             }
-            
-            //Debug.Log("building l: " + xboundl+ " vs r: "+ xboundr);
-            //Debug.Log("building width: " + (xboundr - xboundl));
-            //
+
             for (int j = 0; j < buildings[i].Count; j++)
             {
                 //Defining y bound
@@ -206,7 +208,26 @@ public class Map_generator : MonoBehaviour {
                 
             }
         }
-        //Build cubemap for reflective buildings
+        //Rebake cubemap for reflective buildings
+        bakeCubeMap();
+
+        //Place bounds=================================================================
+        setBound();
+
+        //Place exit=================================================================
+        setDestinationRandomPos();
+
+        //Place player=================================================================
+        setPlayerRandomPos();
+    }
+
+    public void Reset()
+    {
+        
+    }
+
+    void bakeCubeMap()
+    {
         for (int i = 0; i < building_pool.Count; i++)
         {
             One_time_cubemap cubemap_script = building_pool[i].GetComponent<One_time_cubemap>();
@@ -215,87 +236,74 @@ public class Map_generator : MonoBehaviour {
                 cubemap_script.Render();
             }
         }
+    }
 
-        //Place player=================================================================
+    void setBound()
+    {
+        tempVec = right_bound.transform.position;
+        tempVec.x = building_pool[building_pool.Count - 1].transform.position.x;
+        tempVec.z = (building_pool[building_pool.Count - 1].transform.position.z + building_pool[0].transform.position.z) / 2;
+        right_bound.transform.position = tempVec;
+
+        tempVec = left_bound.transform.position;
+        tempVec.x = building_pool[0].transform.position.x;
+        tempVec.z = (building_pool[building_pool.Count - 1].transform.position.z + building_pool[0].transform.position.z) / 2;
+        left_bound.transform.position = tempVec;
+
+        tempVec = up_bound.transform.position;
+        tempVec.z = building_pool[building_pool.Count - 1].transform.position.z;
+        tempVec.x = (building_pool[building_pool.Count - 1].transform.position.x + building_pool[0].transform.position.x) / 2;
+        up_bound.transform.position = tempVec;
+
+        tempVec = lower_bound.transform.position;
+        tempVec.z = building_pool[0].transform.position.z;
+        tempVec.x = (building_pool[building_pool.Count - 1].transform.position.x + building_pool[0].transform.position.x) / 2;
+        lower_bound.transform.position = tempVec;
+
+        tempVec = right_bound.transform.localScale;
+        tempVec.z = up_bound.transform.position.z - lower_bound.transform.position.z;
+        right_bound.transform.localScale = tempVec;
+
+        tempVec = left_bound.transform.localScale;
+        tempVec.z = up_bound.transform.position.z - lower_bound.transform.position.z;
+        left_bound.transform.localScale = tempVec;
+
+        tempVec = up_bound.transform.localScale;
+        tempVec.x = right_bound.transform.position.x - left_bound.transform.position.x;
+        up_bound.transform.localScale = tempVec;
+
+        tempVec = lower_bound.transform.localScale;
+        tempVec.x = right_bound.transform.position.x - left_bound.transform.position.x;
+        lower_bound.transform.localScale = tempVec;
+    }
+
+    void setPlayerRandomPos()
+    {
         int avenue = Random.Range(0, vertical_roads.Count - 1);
         int street = Random.Range(0, horizontal_roads.Count - 1);
-        float playerx = (vertical_roads[avenue].upper + vertical_roads[avenue].lower)/2;
-        float playery = (horizontal_roads[street].upper + horizontal_roads[street].lower) / 2;
-        player_object.transform.position = new Vector3(playerx,3,playery);
+        tempVec.x = (vertical_roads[avenue].upper + vertical_roads[avenue].lower) / 2;
+        tempVec.z = (horizontal_roads[street].upper + horizontal_roads[street].lower) / 2;
+        spawnLocation = tempVec;
+        Game_watcher.setPlayerPos(tempVec);
+    }
 
-        //Place bounds=================================================================
-        Vector3 bound_vec = right_bound.transform.position;
-        bound_vec.x = building_pool[building_pool.Count-1].transform.position.x;
-        bound_vec.z = (building_pool[building_pool.Count - 1].transform.position.z + building_pool[0].transform.position.z)/2;
-        right_bound.transform.position = bound_vec;
-
-        bound_vec = left_bound.transform.position;
-        bound_vec.x = building_pool[0].transform.position.x;
-        bound_vec.z = (building_pool[building_pool.Count - 1].transform.position.z + building_pool[0].transform.position.z) / 2;
-        left_bound.transform.position = bound_vec;
-
-        bound_vec = up_bound.transform.position;
-        bound_vec.z = building_pool[building_pool.Count-1].transform.position.z;
-        bound_vec.x = (building_pool[building_pool.Count - 1].transform.position.x + building_pool[0].transform.position.x) / 2;
-        up_bound.transform.position = bound_vec;
-
-        bound_vec = lower_bound.transform.position;
-        bound_vec.z = building_pool[0].transform.position.z;
-        bound_vec.x = (building_pool[building_pool.Count - 1].transform.position.x + building_pool[0].transform.position.x) / 2;
-        lower_bound.transform.position = bound_vec;
-
-        bound_vec = right_bound.transform.localScale;
-        bound_vec.z = up_bound.transform.position.z - lower_bound.transform.position.z;
-        right_bound.transform.localScale = bound_vec;
-
-        bound_vec = left_bound.transform.localScale;
-        bound_vec.z = up_bound.transform.position.z - lower_bound.transform.position.z;
-        left_bound.transform.localScale = bound_vec;
-
-        bound_vec = up_bound.transform.localScale;
-        bound_vec.x = right_bound.transform.position.x - left_bound.transform.position.x;
-        up_bound.transform.localScale = bound_vec;
-
-        bound_vec = lower_bound.transform.localScale;
-        bound_vec.x = right_bound.transform.position.x - left_bound.transform.position.x;
-        lower_bound.transform.localScale = bound_vec;
-
-
-        //Place exit=================================================================
-        int min_distance = 2;
-        int ran_avenue = Mathf.Abs(vertical_roads.Count - 1 - (avenue + min_distance)) + Mathf.Abs(avenue - min_distance);
-        int exit_avenue = Random.Range(0, ran_avenue);
-        if(exit_avenue >= Mathf.Abs(avenue - min_distance))
-        {
-            exit_avenue = exit_avenue + 1 - Mathf.Abs(avenue - min_distance) + avenue + min_distance;
-        }
-        else// <= 1
-        {
-            exit_avenue = avenue - min_distance - 1;
-        }
-        int ran_street = Mathf.Abs(horizontal_roads.Count - 1 - (street + min_distance)) + Mathf.Abs(street - min_distance);
-        int exit_street = Random.Range(0, ran_street);
-        if (exit_street > Mathf.Abs(street - min_distance))
-        {
-            exit_street = exit_street + 1 - Mathf.Abs(street - min_distance) + street + min_distance;
-        }
-        else
-        {
-            exit_street = street - min_distance - 1;
-        }
-        //Calculate entrance direction
-        int face = Random.Range(0,3);//up0,right1,bottom2,left3
-        int building_index = exit_avenue * buildings[0].Count + exit_street;
+    void setDestinationRandomPos()
+    {
+        int avenue = Random.Range(0, vertical_roads.Count - 1);
+        int street = Random.Range(0, horizontal_roads.Count - 1);
+        //Choose building
+        int face = Random.Range(0, 3);//up0,right1,bottom2,left3
+        int building_index = avenue * buildings[0].Count + street;
         building_index = Mathf.Clamp(building_index, 0, building_pool.Count - 1);
-        GameObject building = building_pool[building_index];
-        if (exit_avenue == 0)
+        GameObject exitBuilding = building_pool[building_index];
+        if (avenue == 0)
         {
-            if(exit_street == 0)//Bottom Left Corner, move right & face UP
+            if (street == 0)//Bottom Left Corner, move right & face UP
             {
                 building_index++;
                 face = 0;
             }
-            else if(exit_street == horizontal_roads.Count)//Top left, move right & face DOWN
+            else if (street == horizontal_roads.Count)//Top left, move right & face DOWN
             {
                 building_index++;
                 face = 2;
@@ -305,14 +313,14 @@ public class Map_generator : MonoBehaviour {
                 face = 1;
             }
         }
-        else if(exit_avenue == vertical_roads.Count)
+        else if (avenue == vertical_roads.Count)
         {
-            if (exit_street == 0)//Bottom right Corner, move left & face UP
+            if (street == 0)//Bottom right Corner, move left & face UP
             {
                 building_index--;
                 face = 0;
             }
-            else if (exit_street == horizontal_roads.Count)//Top Right, move left & face DOWN
+            else if (street == horizontal_roads.Count)//Top Right, move left & face DOWN
             {
                 building_index--;
                 face = 2;
@@ -324,59 +332,62 @@ public class Map_generator : MonoBehaviour {
         }
         else
         {
-            if (exit_street == 0)//Bottom, face UP
+            if (street == 0)//Bottom, face UP
             {
                 face = 0;
             }
-            else if (exit_street == horizontal_roads.Count)//Top, face DOWN
+            else if (street == horizontal_roads.Count)//Top, face DOWN
             {
                 face = 2;
             }
         }
 
         //Position and scale exit
-        Vector3 temp_vec = building.transform.position;
-        temp_vec.y = 2.5f;
+        tempVec = exitBuilding.transform.position;
+        tempVec.y = 2.5f;
         if (face == 0)//up
         {
-            temp_vec.z += building.transform.localScale.z / 2;
-            exit_object.transform.position = temp_vec;
-            temp_vec.z = exit_trig_width;
-            temp_vec.x = building.transform.localScale.x / 2;
-            exit_object.transform.localScale = temp_vec;
-            exit_object.set_entrance_dir(CONSTANTS.DIRECTION.UP);
+            tempVec.z += exitBuilding.transform.localScale.z / 2;
+            exit_object.transform.position = tempVec;
+            tempVec.z = exit_trig_width;
+            tempVec.x = exitBuilding.transform.localScale.x / 2;
+            exit_object.transform.localScale = tempVec;
+            exit_object.setEntranceDir(CONSTANTS.DIRECTION.UP);
         }
         else if (face == 2)//down
         {
-            temp_vec.z -= building.transform.localScale.z / 2;
-            exit_object.transform.position = temp_vec;
-            temp_vec.z = exit_trig_width;
-            temp_vec.x = building.transform.localScale.x / 2;
-            exit_object.transform.localScale = temp_vec;
-            exit_object.set_entrance_dir(CONSTANTS.DIRECTION.DOWN);
+            tempVec.z -= exitBuilding.transform.localScale.z / 2;
+            exit_object.transform.position = tempVec;
+            tempVec.z = exit_trig_width;
+            tempVec.x = exitBuilding.transform.localScale.x / 2;
+            exit_object.transform.localScale = tempVec;
+            exit_object.setEntranceDir(CONSTANTS.DIRECTION.DOWN);
         }
-        else if(face == 1)//right
+        else if (face == 1)//right
         {
-            temp_vec.x += building.transform.localScale.x / 2;
-            exit_object.transform.position = temp_vec;
-            temp_vec.x = exit_trig_width;
-            temp_vec.z = building.transform.localScale.z / 2;
-            exit_object.transform.localScale = temp_vec;
-            exit_object.set_entrance_dir(CONSTANTS.DIRECTION.RIGHT);
+            tempVec.x += exitBuilding.transform.localScale.x / 2;
+            exit_object.transform.position = tempVec;
+            tempVec.x = exit_trig_width;
+            tempVec.z = exitBuilding.transform.localScale.z / 2;
+            exit_object.transform.localScale = tempVec;
+            exit_object.setEntranceDir(CONSTANTS.DIRECTION.RIGHT);
         }
         else if (face == 3)//left
         {
-            temp_vec.x -= building.transform.localScale.x / 2;
-            exit_object.transform.position = temp_vec;
-            temp_vec.x = exit_trig_width;
-            temp_vec.z = building.transform.localScale.z / 2;
-            exit_object.transform.localScale = temp_vec;
-            exit_object.set_entrance_dir(CONSTANTS.DIRECTION.LEFT);
+            tempVec.x -= exitBuilding.transform.localScale.x / 2;
+            exit_object.transform.position = tempVec;
+            tempVec.x = exit_trig_width;
+            tempVec.z = exitBuilding.transform.localScale.z / 2;
+            exit_object.transform.localScale = tempVec;
+            exit_object.setEntranceDir(CONSTANTS.DIRECTION.LEFT);
         }
-        exit_object.levelPass = true;
-        //Game_watcher.singleton.set_start_end(player_object.transform.position, exit_object.transform.position);
 
+        destinLocation = exit_object.transform.position;
     }
 
 
+    public static float getDistanceTravelled()
+    {
+        return Vector3.Distance(spawnLocation, destinLocation);
+    }
 }

@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class Destination_trigger : MonoBehaviour {
     
-    public LayerMask mask;
-    public bool levelPass = false;
-    public static Destination_trigger singleton;
+    float distanceTraveled = 0;
     float entrance_direction = 0;
-
-	// Use this for initialization
-	void Start () {
-        singleton = this;
+    // Use this for initialization
+    void Start () {
         GetComponent<MeshRenderer>().enabled = false;	
 	}
-    public void set_entrance_dir(CONSTANTS.DIRECTION dir)
+
+    public void setEntranceDir(CONSTANTS.DIRECTION dir)
     {
         switch (dir)
         {
@@ -33,17 +30,12 @@ public class Destination_trigger : MonoBehaviour {
         }
 
     }
-    public float get_entrance_dir()
+    public float getDestinationDir()
     {
         return entrance_direction;
     }
     private void OnTriggerEnter(Collider other)
     {
-        //If miles haven't been reached, generate next map
-        //Game_watcher.singleton.miles += transform.position.y - 
-        Map_generator.singleton.map_generate();
-        
-        //If reached, trigger stat board + replay
-
+        Game_watcher.OnReachDestination(Map_generator.getDistanceTravelled());
     }
 }
