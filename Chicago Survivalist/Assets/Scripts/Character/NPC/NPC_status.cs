@@ -22,7 +22,7 @@ public class NPC_status : Character, ICharacterStat
     public void damage(IDamage damage)
     {
         DamageAgent agent = damage.getDamageAgent();
-        float damageAmount = ((Damage)damage).outputDamage(false);
+        float damageAmount = ((Damage)damage).getDamage(false);
 
         health -= damageAmount;
         damage.sideEffect(this, damageAmount);

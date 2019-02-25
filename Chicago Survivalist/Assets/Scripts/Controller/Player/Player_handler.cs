@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -43,7 +44,16 @@ public class Player_handler : MovementController, IController
             moveTo();
         }
 	}
-    
+
+    public void triggerFinishMiles()
+    {
+        playerHUD.triggerFinishMiles();
+    }
+    public void triggerDeath()
+    {
+        playerHUD.triggerDeath();
+    }
+
     public void obtainMoveToPos()
     {
         getCursorCast();

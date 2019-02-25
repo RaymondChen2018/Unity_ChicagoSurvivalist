@@ -221,7 +221,7 @@ public class Map_generator : MonoBehaviour {
         setPlayerRandomPos();
     }
 
-    public void Reset()
+    public void ResetGame()
     {
         
     }
@@ -384,7 +384,6 @@ public class Map_generator : MonoBehaviour {
 
         destinLocation = exit_object.transform.position;
     }
-
 
     public static float getDistanceTravelled()
     {

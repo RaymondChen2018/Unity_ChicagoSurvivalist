@@ -12,17 +12,25 @@ public interface IDamage
 }
 public abstract class Damage
 {
-    protected static float damageAmount;
-    protected static Vector2 damageDirection;
-    public float getRawDamageAmount()
+    public static DamageBULLET dmgBulletSingleton;
+    public static DamageCARCRUSH dmgCarCrushSingleton;
+    public static DamageFREEZE dmgFreezeSingleton;
+    public static DamageICE dmgIceSingleton;
+    public static DamageRAIN dmgRainSingleton;
+    public static DamageWIND dmgWindSingleton;
+
+    public float damageAmount;
+    public Vector2 damageDirection;
+    protected Damage()
     {
-        return damageAmount;
+        dmgBulletSingleton = new DamageBULLET();
+        dmgCarCrushSingleton = new DamageCARCRUSH();
+        dmgFreezeSingleton = new DamageFREEZE();
+        dmgIceSingleton = new DamageICE();
+        dmgRainSingleton = new DamageRAIN();
+        dmgWindSingleton = new DamageWIND();
     }
-    public Vector3 getDirection()
-    {
-        return damageDirection;
-    }
-    public float outputDamage(bool defenced)
+    public float getDamage(bool defenced)
     {
         if (defenced)
         {
@@ -37,25 +45,13 @@ public abstract class Damage
 }
 public class DamageBULLET : Damage, IDamage
 {
-    public DamageBULLET(float _damageAmount, Vector3 direction)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = direction;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.BULLET;
     }
-    
-
 }
 public class DamageFREEZE : Damage, IDamage
 {
-    public DamageFREEZE(float _damageAmount)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = Vector3.zero;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.FREEZE;
@@ -67,24 +63,13 @@ public class DamageFREEZE : Damage, IDamage
 }
 public class DamageICE : Damage, IDamage
 {
-    public DamageICE(float _damageAmount)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = Vector3.down;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.ICE;
     }
-
 }
 public class DamageWIND : Damage, IDamage
 {
-    public DamageWIND(float _damageAmount, Vector3 direction)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = direction;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.WIND;
@@ -96,11 +81,6 @@ public class DamageWIND : Damage, IDamage
 }
 public class DamageCARCRUSH : Damage, IDamage
 {
-    public DamageCARCRUSH(float _damageAmount, Vector3 direction)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = direction;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.CARCRUSH;
@@ -112,11 +92,6 @@ public class DamageCARCRUSH : Damage, IDamage
 }
 public class DamageRAIN : Damage, IDamage
 {
-    public DamageRAIN(float _damageAmount)
-    {
-        damageAmount = _damageAmount;
-        damageDirection = Vector3.down;
-    }
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.RAIN;

@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    static float TEMPERATURE_RECOVER_RATE = 1;
-    static float BODY_TEMPERATURE = 27;
+    /// <summary>
+    /// Thermal recover per second
+    /// </summary>
+    const float TEMPERATURE_RECOVER_RATE = 1;
+    const float BODY_TEMPERATURE = 27;
+    const float MAX_HEALTH = 100;
     [SerializeField] protected float health = 100;
     [SerializeField] protected float bodyTemperature = 27;
     /// <summary>
@@ -71,6 +75,10 @@ public class Character : MonoBehaviour
     public float getTemperature()
     {
         return bodyTemperature;
+    }
+    public float getConcussionTimer()
+    {
+        return concussion;
     }
     public CharacterType getType()
     {

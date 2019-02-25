@@ -9,6 +9,7 @@ public class Destination_trigger : MonoBehaviour {
     // Use this for initialization
     void Start () {
         GetComponent<MeshRenderer>().enabled = false;	
+        
 	}
 
     public void setEntranceDir(CONSTANTS.DIRECTION dir)

@@ -8,8 +8,8 @@ public class Game_watcher : MonoBehaviour {
     [SerializeField] private Destination_trigger Destination;
     static Map_generator Map_generator;
     public float miles;
-    private Vector3 start_position;
-    private Vector3 end_position;
+
+    private const float MILES_REQUIREMENT = 300;
 
     void Start()
     {
@@ -17,19 +17,30 @@ public class Game_watcher : MonoBehaviour {
         Map_generator = GetComponent<Map_generator>();
         Map_generator.map_generate();
     }
-    public static void OnReachDestination(float distanceTravelled)
-    {
-        //If miles haven't been reached, generate next map
-        singleton.miles += distanceTravelled;
-        Map_generator.map_generate();
-        //If reached, trigger stat board + replay
-    }
-
-    public void Reset()
+    public void ResetGame()
     {
         miles = 0;
-        Map_generator.Reset();
+        Map_generator.ResetGame();
     }
+
+    public static void OnReachDestination(float distanceTravelled)
+    {
+        singleton.miles += distanceTravelled;
+        float milesTravelled = singleton.miles;
+
+        if (milesTravelled < MILES_REQUIREMENT)
+        {
+            //If miles haven't been reached, generate next map
+            Map_generator.map_generate();
+        }
+        else
+        {
+            //If reached, trigger stat board + replay
+            singleton.PlayerObject.triggerFinishMiles();
+        }
+    }
+
+    
 
     public static void setPlayerPos(Vector3 pos)
     {
