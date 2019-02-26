@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game_watcher : MonoBehaviour {
     public static Game_watcher singleton;
@@ -9,11 +10,12 @@ public class Game_watcher : MonoBehaviour {
     static Map_generator Map_generator;
     public float miles;
 
-    private const float MILES_REQUIREMENT = 300;
+    private const float MILES_REQUIREMENT = 1000;
 
     void Start()
     {
         singleton = this;
+        Damage.damageInitialize();
         Map_generator = GetComponent<Map_generator>();
         Map_generator.map_generate();
     }
@@ -53,5 +55,10 @@ public class Game_watcher : MonoBehaviour {
     public static float getDestinationDir()
     {
         return singleton.Destination.getDestinationDir();
+    }
+
+    public void quitGame()
+    {
+        SceneManager.LoadScene("Menu_scene");
     }
 }

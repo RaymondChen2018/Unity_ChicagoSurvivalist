@@ -12,6 +12,8 @@ public interface ICharacterStat
     /// Damage analysis
     /// </summary>
     /// <param name="damage"></param>
-    void damage(IDamage damage);
+    //void damage(IDamage damage);
+
+    void sf_damage(float damageAmount, DamageAgent agent);
 }
 

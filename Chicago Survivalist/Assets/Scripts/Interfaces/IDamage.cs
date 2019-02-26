@@ -2,7 +2,7 @@
 
 public enum DamageAgent
 {
-    BULLET, FREEZE, ICE, WIND, CARCRUSH, RAIN
+    GENERIC, BULLET, FREEZE, ICE, WIND, CARCRUSH, RAIN
 }
 
 public interface IDamage
@@ -12,23 +12,23 @@ public interface IDamage
 }
 public abstract class Damage
 {
-    public static DamageBULLET dmgBulletSingleton;
-    public static DamageCARCRUSH dmgCarCrushSingleton;
-    public static DamageFREEZE dmgFreezeSingleton;
-    public static DamageICE dmgIceSingleton;
-    public static DamageRAIN dmgRainSingleton;
-    public static DamageWIND dmgWindSingleton;
+    public static DamageBULLET Bullet;
+    public static DamageCARCRUSH CarCrush;
+    public static DamageFREEZE Freeze;
+    public static DamageICE Ice;
+    public static DamageRAIN Rain;
+    public static DamageWIND Wind;
 
     public float damageAmount;
     public Vector2 damageDirection;
-    protected Damage()
+    public static void damageInitialize()
     {
-        dmgBulletSingleton = new DamageBULLET();
-        dmgCarCrushSingleton = new DamageCARCRUSH();
-        dmgFreezeSingleton = new DamageFREEZE();
-        dmgIceSingleton = new DamageICE();
-        dmgRainSingleton = new DamageRAIN();
-        dmgWindSingleton = new DamageWIND();
+        Bullet = new DamageBULLET();
+        CarCrush = new DamageCARCRUSH();
+        Freeze = new DamageFREEZE();
+        Ice = new DamageICE();
+        Rain = new DamageRAIN();
+        Wind = new DamageWIND();
     }
     public float getDamage(bool defenced)
     {
@@ -55,10 +55,6 @@ public class DamageFREEZE : Damage, IDamage
     public DamageAgent getDamageAgent()
     {
         return DamageAgent.FREEZE;
-    }
-    public new void sideEffect(Character character, float damageInflicted)
-    {
-        character.sf_freeze(damageInflicted);
     }
 }
 public class DamageICE : Damage, IDamage

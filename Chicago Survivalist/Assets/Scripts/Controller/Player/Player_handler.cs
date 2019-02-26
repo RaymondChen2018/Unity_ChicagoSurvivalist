@@ -11,11 +11,14 @@ public class Player_handler : MovementController, IController
 
     //Local variables
     [HideInInspector] public Vector3 cursorCastPos;
+    private bool Deceased = false;
 
     //Components
     Player_status playerStatus;
     Player_equip playerEquip;
     Player_hud playerHUD;
+
+
     // Use this for initialization
     void Start () {
         RB = GetComponent<Rigidbody>();
@@ -37,8 +40,8 @@ public class Player_handler : MovementController, IController
             playerHUD.setCursorOn(false);
         }
 
-        //While key down
-        if(Input.GetKey(ScreenPress))
+        //Move
+        if(!Deceased && Input.GetKey(ScreenPress))
         {
             obtainMoveToPos();
             moveTo();
@@ -49,9 +52,14 @@ public class Player_handler : MovementController, IController
     {
         playerHUD.triggerFinishMiles();
     }
-    public void triggerDeath()
+    public void triggerDeath(DamageAgent agent)
     {
-        playerHUD.triggerDeath();
+        Deceased = true;
+        playerHUD.triggerDeath(agent);
+    }
+    public void triggerRevive()
+    {
+        Deceased = false;
     }
 
     public void obtainMoveToPos()
@@ -69,4 +77,6 @@ public class Player_handler : MovementController, IController
         Physics.Raycast(ray, out hit, 500, cursorCastMask);
         cursorCastPos = hit.point;
     }
+
+    
 }

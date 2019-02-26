@@ -38,6 +38,19 @@ public class Player_hud : MonoBehaviour {
     /// Health where a sheet bleed screen starts fading in as health drops further;
     /// </summary>
     const float INJURIED_START_THREDSHOLD = 50;
+    //Menu
+    [SerializeField] private Image Menu_Death;
+    [SerializeField] private Image Menu_Death_Freeze;
+    [SerializeField] private Image Menu_Death_Ice;
+    [SerializeField] private Image Menu_Death_Bullet;
+    [SerializeField] private Image Menu_Death_Wind;
+    [SerializeField] private Image Menu_Death_CarCrush;
+    [SerializeField] private Image Menu_Death_Rain;
+    //HUD
+    [SerializeField] private Text HUD_Temperature_Main;
+    [SerializeField] private Text HUD_Temperature_P;
+    [SerializeField] private Text HUD_Temperature_Point;
+    [SerializeField] private Text HUD_Temperature_Sign;
     //Components
     Player_handler playerHandler;
     Player_status playerStatus;
@@ -52,6 +65,8 @@ public class Player_hud : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        //Update HUD temperature
+        setHUDTemperature();
 
         //Update camera bound
         setCamBoundStat();
@@ -69,6 +84,28 @@ public class Player_hud : MonoBehaviour {
         setInjuriedScreen();
         setFreezeScreen();
         setConcussionScreen();
+    }
+
+    private void setHUDTemperature()
+    {
+        int weatherTemperature_main = (int)Weather.getTemperature();
+        int weatherTemperature_point = (int)Mathf.Abs((Weather.getTemperature() - weatherTemperature_main)*10);
+        HUD_Temperature_Main.text = (weatherTemperature_main).ToString();
+        HUD_Temperature_Point.text = weatherTemperature_point.ToString();
+        if(weatherTemperature_main < Character.FREEZE_START_THREDSHOLD)
+        {
+            HUD_Temperature_Main.color = Color.red;
+            HUD_Temperature_P.color = Color.red;
+            HUD_Temperature_Point.color = Color.red;
+            HUD_Temperature_Sign.color = Color.red;
+        }
+        else
+        {
+            HUD_Temperature_Main.color = Color.cyan;
+            HUD_Temperature_P.color = Color.cyan;
+            HUD_Temperature_Point.color = Color.cyan;
+            HUD_Temperature_Sign.color = Color.cyan;
+        }
     }
 
     private void setConcussionScreen()
@@ -89,7 +126,7 @@ public class Player_hud : MonoBehaviour {
         if(temperature < FREEZE_START_THREDSHOLD)
         {
             tempColor = FreezeScreen.color;
-            tempColor.a = Mathf.Lerp(FREEZE_START_THREDSHOLD, FREEZE_END_THREDSHOLD, temperature);
+            tempColor.a = Mathf.Lerp(0, 1, (FREEZE_START_THREDSHOLD - temperature)/(FREEZE_START_THREDSHOLD - FREEZE_END_THREDSHOLD));
             FreezeScreen.color = tempColor;
         }
     }
@@ -99,7 +136,7 @@ public class Player_hud : MonoBehaviour {
         if (health < INJURIED_START_THREDSHOLD)
         {
             tempColor = InjuriedScreen.color;
-            tempColor.a = Mathf.Lerp(INJURIED_START_THREDSHOLD, 0, health);
+            tempColor.a = Mathf.Lerp(0, 1, 1 - health/INJURIED_START_THREDSHOLD);
             InjuriedScreen.color = tempColor;
         }
     }
@@ -205,8 +242,29 @@ public class Player_hud : MonoBehaviour {
     {
         
     }
-    internal void triggerDeath()
+    internal void triggerDeath(DamageAgent agent)
     {
-
+        Menu_Death.enabled = true;
+        switch (agent)
+        {
+            case DamageAgent.BULLET:
+                Menu_Death_Bullet.enabled = true;
+                break;
+            case DamageAgent.FREEZE:
+                Menu_Death_Freeze.enabled = true;
+                break;
+            case DamageAgent.ICE:
+                Menu_Death_Ice.enabled = true;
+                break;
+            case DamageAgent.RAIN:
+                Menu_Death_Rain.enabled = true;
+                break;
+            case DamageAgent.CARCRUSH:
+                Menu_Death_CarCrush.enabled = true;
+                break;
+            case DamageAgent.WIND:
+                Menu_Death_Wind.enabled = true;
+                break;
+        }
     }
 }

@@ -27,4 +27,9 @@ public class NPC_status : Character, ICharacterStat
         health -= damageAmount;
         damage.sideEffect(this, damageAmount);
     }
+
+    public void sf_damage(float damageAmount, DamageAgent agent)
+    {
+        throw new System.NotImplementedException();
+    }
 }
