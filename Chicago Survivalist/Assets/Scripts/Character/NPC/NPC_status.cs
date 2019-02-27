@@ -2,34 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// AI's health & temperature does not influence the AI's behaviors.
+/// </summary>
 public class NPC_status : Character, ICharacterStat
 {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     /// <summary>
-    /// Damage call
+    /// AI type
     /// </summary>
-    /// <param name="damage">Damage object including type and amount of damage</param>
-    public void damage(IDamage damage)
+    /// <returns></returns>
+    public CharacterType getType()
     {
-        DamageAgent agent = damage.getDamageAgent();
-        float damageAmount = ((Damage)damage).getDamage(false);
-
-        health -= damageAmount;
-        damage.sideEffect(this, damageAmount);
+        return CharacterType.NPC;
     }
-
-    public void sf_damage(float damageAmount, DamageAgent agent)
+    /// <summary>
+    /// Reduce health and take actions in response to damage
+    /// </summary>
+    /// <param name="damageAmount">The amound of damage inflicted</param>
+    /// <param name="agent">The type of damage inflicted</param>
+    override public void damage(float damageAmount, DamageAgent agent)
     {
-        throw new System.NotImplementedException();
+        float damage = damageAmount;
+        if(agent == DamageAgent.BULLET && hasArmor())
+        {
+            damage *= 0.5f;
+        }
+        base.damage(damage, agent);
+    }
+    /// <summary>
+    /// Is this AI armored?
+    /// </summary>
+    /// <returns></returns>
+    public bool hasArmor()
+    {
+        return false;
     }
 }

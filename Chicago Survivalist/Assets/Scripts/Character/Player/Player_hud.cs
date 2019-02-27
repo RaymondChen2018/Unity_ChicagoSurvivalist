@@ -8,6 +8,7 @@ public class Player_hud : MonoBehaviour {
 
     //Cursor Render
     [SerializeField] public SpriteRenderer cursorCastSprite;
+
     //TrackArrow Render
     public GameObject trackArrow = null;
     Vector3 screen_intersect = Vector3.zero;
@@ -38,6 +39,7 @@ public class Player_hud : MonoBehaviour {
     /// Health where a sheet bleed screen starts fading in as health drops further;
     /// </summary>
     const float INJURIED_START_THREDSHOLD = 50;
+
     //Menu
     [SerializeField] private Image Menu_Death;
     [SerializeField] private Image Menu_Death_Freeze;
@@ -46,17 +48,20 @@ public class Player_hud : MonoBehaviour {
     [SerializeField] private Image Menu_Death_Wind;
     [SerializeField] private Image Menu_Death_CarCrush;
     [SerializeField] private Image Menu_Death_Rain;
+
     //HUD
     [SerializeField] private Text HUD_Temperature_Main;
     [SerializeField] private Text HUD_Temperature_P;
     [SerializeField] private Text HUD_Temperature_Point;
     [SerializeField] private Text HUD_Temperature_Sign;
+
     //Components
     Player_handler playerHandler;
     Player_status playerStatus;
 
     //Temperary variables
     Color tempColor;
+
     // Use this for initialization
     void Start () {
         playerHandler = GetComponent<Player_handler>();
@@ -85,7 +90,9 @@ public class Player_hud : MonoBehaviour {
         setFreezeScreen();
         setConcussionScreen();
     }
-
+    /// <summary>
+    /// Shows weather temperature to the HUD display
+    /// </summary>
     private void setHUDTemperature()
     {
         int weatherTemperature_main = (int)Weather.getTemperature();
@@ -107,7 +114,9 @@ public class Player_hud : MonoBehaviour {
             HUD_Temperature_Sign.color = Color.cyan;
         }
     }
-
+    /// <summary>
+    /// Determine if display concussion effeect
+    /// </summary>
     private void setConcussionScreen()
     {
         if(playerStatus.getConcussionTimer() > 0)
@@ -119,7 +128,9 @@ public class Player_hud : MonoBehaviour {
             //Concussion off
         }
     }
-
+    /// <summary>
+    /// Displays freeze screen effect when temperature is low
+    /// </summary>
     private void setFreezeScreen()
     {
         float temperature = playerStatus.getTemperature();
@@ -130,6 +141,9 @@ public class Player_hud : MonoBehaviour {
             FreezeScreen.color = tempColor;
         }
     }
+    /// <summary>
+    /// Display bleed screen when the player's health is low
+    /// </summary>
     private void setInjuriedScreen()
     {
         float health = playerStatus.getHealth();
@@ -141,13 +155,15 @@ public class Player_hud : MonoBehaviour {
         }
     }
 
-
-
-    //If found intersection, edit value of screen_intersect
-    void intersection(CONSTANTS.DIRECTION direction)//Top0, Right1, Bottom2, Left3
+    /// <summary>
+    /// To do: Make this part more understandable;
+    /// Determines the screen coordinate that the destination arrow is set at
+    /// And store the value at a local variable
+    /// </summary>
+    /// <param name="direction">Calculate which direction?</param>
+    void intersection(CONSTANTS.DIRECTION direction)
     {
         screen_intersect.y = 5;
-
         switch (direction)
         {
         case CONSTANTS.DIRECTION.UP://Top    
@@ -185,6 +201,9 @@ public class Player_hud : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Determines the camera view bound coordinates and store them in variables
+    /// </summary>
     void setCamBoundStat()
     {
         Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
@@ -195,11 +214,13 @@ public class Player_hud : MonoBehaviour {
         heightCamViewBoundHalved = (topCamViewBound - lowerCamViewBound) / 2;
         widthCamViewBoundHalved = (rightCamViewBound - leftCamViewBound) / 2;
     }
+    /// <summary>
+    /// Display destination arrow
+    /// </summary>
     void setDestineArrow()
     {
         destinPosition = Game_watcher.getDestinationPos();
         thisPosition = transform.position;
-
         //Calculate the intersection b/w cam-to-destine line and the screen bounds
         if (destinPosition.z > topCamViewBound)
         {
@@ -217,7 +238,6 @@ public class Player_hud : MonoBehaviour {
         {
             intersection(CONSTANTS.DIRECTION.LEFT);
         }
-
         //Destination inside camera view
         if (destinPosition.z <= topCamViewBound && destinPosition.z >= lowerCamViewBound && destinPosition.x <= rightCamViewBound && destinPosition.x >= leftCamViewBound)
         {
@@ -232,17 +252,26 @@ public class Player_hud : MonoBehaviour {
             trackArrow.transform.position = screen_intersect;
         }
     }
-
+    /// <summary>
+    /// Switch on/off cursor
+    /// </summary>
+    /// <param name="isOn"></param>
     public void setCursorOn(bool isOn)
     {
         cursorCastSprite.enabled = isOn;
     }
-
-    internal void triggerFinishMiles()
+    /// <summary>
+    /// Call back when player wins the game
+    /// </summary>
+    internal void _triggerFinishMiles()
     {
         
     }
-    internal void triggerDeath(DamageAgent agent)
+    /// <summary>
+    /// Call back when player dies
+    /// </summary>
+    /// <param name="agent">The cause the player died of</param>
+    internal void _triggerDeath(DamageAgent agent)
     {
         Menu_Death.enabled = true;
         switch (agent)

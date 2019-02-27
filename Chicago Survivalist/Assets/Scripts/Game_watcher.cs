@@ -38,7 +38,7 @@ public class Game_watcher : MonoBehaviour {
         else
         {
             //If reached, trigger stat board + replay
-            singleton.PlayerObject.triggerFinishMiles();
+            singleton.PlayerObject._triggerFinishMiles();
         }
     }
 

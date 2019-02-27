@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+namespace CharacterPackage { }
 public enum CharacterType
 {
     PLAYER, NPC
@@ -8,12 +8,11 @@ public enum CharacterType
 public interface ICharacterStat
 {
     CharacterType getType();
-    /// <summary>
-    /// Damage analysis
-    /// </summary>
-    /// <param name="damage"></param>
-    //void damage(IDamage damage);
-
-    void sf_damage(float damageAmount, DamageAgent agent);
+    void damage(float damageAmount, DamageAgent agent);
+    float getHealth();
+    float getTemperature();
+    float getConcussionTimer();
+    bool isConcussed();
+    bool hasArmor();
 }
 

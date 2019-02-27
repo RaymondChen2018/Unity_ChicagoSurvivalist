@@ -72,7 +72,7 @@ public class DamageWIND : Damage, IDamage
     }
     public new void sideEffect(Character character, float damageInflicted)
     {
-        character.sf_freeze(damageInflicted);
+        //character.sf_freeze(damageInflicted);
     }
 }
 public class DamageCARCRUSH : Damage, IDamage
@@ -83,7 +83,7 @@ public class DamageCARCRUSH : Damage, IDamage
     }
     public new void sideEffect(Character character, float damageInflicted)
     {
-        character.sf_concuss(damageInflicted);
+        //character.sf_concuss(damageInflicted);
     }
 }
 public class DamageRAIN : Damage, IDamage

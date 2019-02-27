@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Player_handler : MovementController, IController
 {
     //Key input
@@ -12,12 +13,11 @@ public class Player_handler : MovementController, IController
     //Local variables
     [HideInInspector] public Vector3 cursorCastPos;
     private bool Deceased = false;
-
+    
     //Components
     Player_status playerStatus;
     Player_equip playerEquip;
     Player_hud playerHUD;
-
 
     // Use this for initialization
     void Start () {
@@ -43,33 +43,54 @@ public class Player_handler : MovementController, IController
         //Move
         if(!Deceased && Input.GetKey(ScreenPress))
         {
-            obtainMoveToPos();
+            
+            analyzMoveTo();
             moveTo();
         }
-	}
-
-    public void triggerFinishMiles()
-    {
-        playerHUD.triggerFinishMiles();
     }
-    public void triggerDeath(DamageAgent agent)
+
+    /// <summary>
+    /// Player is not in any squad
+    /// </summary>
+    /// <returns></returns>
+    public bool hasSquad()
+    {
+        return false;
+    }
+    /// <summary>
+    /// Call back when player wins
+    /// </summary>
+    public void _triggerFinishMiles()
+    {
+        playerHUD._triggerFinishMiles();
+    }
+    /// <summary>
+    /// Call back when player dies
+    /// </summary>
+    /// <param name="agent">The cause the player died of</param>
+    public void _triggerDeath(DamageAgent agent)
     {
         Deceased = true;
-        playerHUD.triggerDeath(agent);
+        playerHUD._triggerDeath(agent);
     }
-    public void triggerRevive()
+    /// <summary>
+    /// Call back when the player revives
+    /// </summary>
+    public void _triggerRevive()
     {
         Deceased = false;
     }
-
-    public void obtainMoveToPos()
+    /// <summary>
+    /// Player moves toward cursor position;
+    /// </summary>
+    void analyzMoveTo()
     {
         getCursorCast();
-        moveto = cursorCastPos - transform.position;
+        velVec = cursorCastPos - transform.position;
     }
-
-
-    //Obtain cursor cast position
+    /// <summary>
+    /// get the mouse coordinate on ground in (x,y) and store it at a local variable
+    /// </summary>
     void getCursorCast()
     {
         RaycastHit hit;
@@ -77,6 +98,4 @@ public class Player_handler : MovementController, IController
         Physics.Raycast(ray, out hit, 500, cursorCastMask);
         cursorCastPos = hit.point;
     }
-
-    
 }
