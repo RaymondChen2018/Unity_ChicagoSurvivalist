@@ -4,7 +4,7 @@
 /// Player inventory
 /// </summary>
 public class Player_equip : MonoBehaviour {
-
+    
     /// <summary>
     /// Inventory slot 1/2
     /// </summary>
@@ -13,7 +13,13 @@ public class Player_equip : MonoBehaviour {
     /// Inventory slot 2/2
     /// </summary>
     [SerializeField] private Item item2 = Item.NONE;
-	
+    Player_hud playerHUD;
+
+    void Start()
+    {
+        playerHUD = GetComponent<Player_hud>();    
+    }
+
     /// <summary>
     /// Does the player has armor?
     /// </summary>
@@ -47,12 +53,40 @@ public class Player_equip : MonoBehaviour {
         if (item1 == Item.NONE)
         {
             item1 = item;
-
+            playerHUD.setEquip(0, item, false);
         }
         else if (item2 == Item.NONE)
         {
             item2 = item;
-
+            playerHUD.setEquip(1, item, false);
         }
+    }
+
+    public void approachItem(Item item)
+    {
+        if (item1 == Item.NONE)
+        {
+            item1 = item;
+            playerHUD.setEquip(0, item, false);
+        }
+        else if (item2 == Item.NONE)
+        {
+            item2 = item;
+            playerHUD.setEquip(1, item, false);
+        }
+    }
+
+
+    sbyte getAvailableSlot()
+    {
+        if (item1 == Item.NONE)
+        {
+            return 0;
+        }
+        else if (item2 == Item.NONE)
+        {
+            return 1;
+        }
+        return -1;
     }
 }

@@ -54,6 +54,8 @@ public class Player_hud : MonoBehaviour {
     [SerializeField] private Text HUD_Temperature_P;
     [SerializeField] private Text HUD_Temperature_Point;
     [SerializeField] private Text HUD_Temperature_Sign;
+    [SerializeField] private Sprite[] itemIcons;
+    [SerializeField] private Image[] equipIcons;
 
     //Components
     Player_handler playerHandler;
@@ -252,6 +254,26 @@ public class Player_hud : MonoBehaviour {
             trackArrow.transform.position = screen_intersect;
         }
     }
+    /// <summary>
+    /// Set equip icon
+    /// </summary>
+    /// <param name="itemIndex">Item1 = 0; Item2 = 1</param>
+    /// <param name="item">The type of item to equip</param>
+    /// <param name="isHint">When player approaches item, shows as hint(half faded icon)</param>
+    public void setEquip(byte itemIndex, Item item, bool isHint)
+    {
+        Image itemIcon = equipIcons[itemIndex];
+        itemIcon.sprite = itemIcons[(int)item];
+        if (isHint)
+        {
+            itemIcon.color = Color.red;
+        }
+        else
+        {
+            itemIcon.color = Color.white;
+        }
+    }
+
     /// <summary>
     /// Switch on/off cursor
     /// </summary>

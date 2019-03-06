@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 350712068}
-  m_IndirectSpecularColor: {r: 0.44799888, g: 0.49800467, b: 0.5755059, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -51,7 +51,7 @@ LightmapSettings:
     m_AlbedoBoost: 1
     m_TemporalCoherenceThreshold: 1
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 1
+    m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
     serializedVersion: 9
@@ -2533,6 +2533,8 @@ MonoBehaviour:
   HUD_Temperature_P: {fileID: 497405344}
   HUD_Temperature_Point: {fileID: 1391655301}
   HUD_Temperature_Sign: {fileID: 523441698}
+  itemIcons: []
+  equipIcons: []
 --- !u!114 &1266723060
 MonoBehaviour:
   m_ObjectHideFlags: 0
