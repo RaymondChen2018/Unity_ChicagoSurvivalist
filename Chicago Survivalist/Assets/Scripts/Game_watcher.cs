@@ -57,8 +57,5 @@ public class Game_watcher : MonoBehaviour {
         return singleton.Destination.getDestinationDir();
     }
 
-    public void quitGame()
-    {
-        SceneManager.LoadScene("Menu_scene");
-    }
+    
 }

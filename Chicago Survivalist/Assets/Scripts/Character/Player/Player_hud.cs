@@ -41,13 +41,8 @@ public class Player_hud : MonoBehaviour {
     const float INJURIED_START_THREDSHOLD = 50;
 
     //Menu
-    [SerializeField] private Image Menu_Death;
-    [SerializeField] private Image Menu_Death_Freeze;
-    [SerializeField] private Image Menu_Death_Ice;
-    [SerializeField] private Image Menu_Death_Bullet;
-    [SerializeField] private Image Menu_Death_Wind;
-    [SerializeField] private Image Menu_Death_CarCrush;
-    [SerializeField] private Image Menu_Death_Rain;
+    [SerializeField] private Death_Panel Menu_Death;
+    
 
     //HUD
     [SerializeField] private Text HUD_Temperature_Main;
@@ -295,27 +290,6 @@ public class Player_hud : MonoBehaviour {
     /// <param name="agent">The cause the player died of</param>
     internal void _triggerDeath(DamageAgent agent)
     {
-        Menu_Death.enabled = true;
-        switch (agent)
-        {
-            case DamageAgent.BULLET:
-                Menu_Death_Bullet.enabled = true;
-                break;
-            case DamageAgent.FREEZE:
-                Menu_Death_Freeze.enabled = true;
-                break;
-            case DamageAgent.ICE:
-                Menu_Death_Ice.enabled = true;
-                break;
-            case DamageAgent.RAIN:
-                Menu_Death_Rain.enabled = true;
-                break;
-            case DamageAgent.CARCRUSH:
-                Menu_Death_CarCrush.enabled = true;
-                break;
-            case DamageAgent.WIND:
-                Menu_Death_Wind.enabled = true;
-                break;
-        }
+        Menu_Death.showDeathScreen(agent);    
     }
 }
